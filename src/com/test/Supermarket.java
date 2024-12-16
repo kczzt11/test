@@ -45,8 +45,10 @@ public class Supermarket {
     //客户购买商品
     public static void consumerBuyItems(Consumer consumer, int quantity, int price, BigDecimal disc, String name) {
         BigDecimal discount = new BigDecimal(0);
-        if (disc.compareTo(new BigDecimal(10)) < 0 && disc.compareTo(new BigDecimal(0)) > 0) {
-            discount = disc.divide(new BigDecimal(10), 2, BigDecimal.ROUND_DOWN);
+        if (disc != null) {
+            if (disc.compareTo(new BigDecimal(10)) < 0 && disc.compareTo(new BigDecimal(0)) > 0) {
+                discount = disc.divide(new BigDecimal(10), 2, BigDecimal.ROUND_DOWN);
+            }
         }
         consumer.addItem(new Item(quantity, price, discount, name));
     }
