@@ -53,7 +53,7 @@ public class Supermarket {
         consumer.addItem(new Item(quantity, price, discount, name));
     }
 
-    //A客户总价
+    //A顾客买了10斤苹果10斤草莓
     public static void consumerATotalPrice() {
         Consumer consumer = new Consumer("A", "0");
         consumerBuyItems(consumer, 10, 8, new BigDecimal(0), "Apple");
@@ -61,7 +61,7 @@ public class Supermarket {
         calculateTotal(consumer);
     }
 
-    //B客户总价
+    //B顾客买了10斤苹果10斤草莓10斤芒果
     public static void consumerBTotalPrice() {
         Consumer consumer = new Consumer("B", "0");
         consumerBuyItems(consumer, 10, 8, new BigDecimal(0), "Apple");
@@ -70,7 +70,7 @@ public class Supermarket {
         calculateTotal(consumer);
     }
 
-    //C客户总价
+    //C客户买了10斤苹果10斤草莓10斤芒果
     public static void consumerCTotalPrice() {
         Consumer consumer = new Consumer("C", "0");
         consumerBuyItems(consumer, 10, 8, new BigDecimal(0), "Apple");
@@ -79,7 +79,7 @@ public class Supermarket {
         calculateTotal(consumer);
     }
 
-    //D客户总价
+    //D客户买了10斤苹果120斤草莓10斤芒果
     public static void consumerDTotalPrice() {
         Consumer consumer = new Consumer("D", "1");
         consumerBuyItems(consumer, 10, 8, new BigDecimal(0), "Apple");
