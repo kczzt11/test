@@ -6,16 +6,21 @@ import java.util.List;
 
 public class Supermarket {
 
+    //是否优惠
+    private static final String IS_DISCOUNT = "1";
+
 
     //是否超过100优惠计算
     public static void discount(Consumer consumer) {
         if (consumer != null) {
-            BigDecimal originalTotal = consumer.getTotal();
-            if (originalTotal.compareTo(new BigDecimal(100)) >= 0) {
-                BigDecimal multiple = originalTotal.divide(new BigDecimal(100), 0, BigDecimal.ROUND_DOWN);
-                BigDecimal subCount = multiple.multiply(new BigDecimal(10));
-                originalTotal = originalTotal.subtract(subCount);
-                consumer.setTotal(originalTotal);
+            if (IS_DISCOUNT.equals(consumer.getIsDiscount())) {
+                BigDecimal originalTotal = consumer.getTotal();
+                if (originalTotal.compareTo(new BigDecimal(100)) >= 0) {
+                    BigDecimal multiple = originalTotal.divide(new BigDecimal(100), 0, BigDecimal.ROUND_DOWN);
+                    BigDecimal subCount = multiple.multiply(new BigDecimal(10));
+                    originalTotal = originalTotal.subtract(subCount);
+                    consumer.setTotal(originalTotal);
+                }
             }
         }
     }
@@ -33,67 +38,94 @@ public class Supermarket {
                 consumer.addProduct(total.setScale(2, BigDecimal.ROUND_HALF_EVEN));
             }
         }
+        discount(consumer);
+        System.out.println("顾客" + consumer.getConsumerName() + "购买水果总计: " + consumer.getTotal() + " 元");
+    }
+
+    //客户购买商品
+    public static void consumerBuyItems(Consumer consumer, int quantity, int price, BigDecimal disc, String name) {
+        BigDecimal discount = new BigDecimal(0);
+        if (disc.compareTo(new BigDecimal(10)) < 0 && disc.compareTo(new BigDecimal(0)) > 0) {
+            discount = disc.divide(new BigDecimal(10), 2, BigDecimal.ROUND_DOWN);
+        }
+        consumer.addItem(new Item(quantity, price, discount, name));
     }
 
     //A客户总价
-    public static void getCustATotalPrice(int appleWeight, int strawberryWeight) {
-        Consumer consumer = new Consumer();
-        consumer.addItem(new Item(appleWeight, 8, new BigDecimal(0.00)));
-        consumer.addItem(new Item(strawberryWeight, 13, new BigDecimal(0.00)));
+    public static void consumerATotalPrice() {
+        Consumer consumer = new Consumer("A", "0");
+        consumerBuyItems(consumer, 10, 8, new BigDecimal(0), "Apple");
+        consumerBuyItems(consumer, 10, 13, new BigDecimal(0), "Strawberry");
         calculateTotal(consumer);
-        System.out.println("A客户购买水果总计: " + consumer.getTotal() + " 元");
     }
 
     //B客户总价
-    public static void getCustBTotalPrice(int appleWeight, int strawberryWeight, int mangoWeight) {
-        Consumer consumer = new Consumer();
-        consumer.addItem(new Item(appleWeight, 8, new BigDecimal(0.00)));
-        consumer.addItem(new Item(strawberryWeight, 13, new BigDecimal(0.00)));
-        consumer.addItem(new Item(mangoWeight, 20, new BigDecimal(0.00)));
+    public static void consumerBTotalPrice() {
+        Consumer consumer = new Consumer("B", "0");
+        consumerBuyItems(consumer, 10, 8, new BigDecimal(0), "Apple");
+        consumerBuyItems(consumer, 10, 13, new BigDecimal(0), "Strawberry");
+        consumerBuyItems(consumer, 10, 20, new BigDecimal(0), "Mango");
         calculateTotal(consumer);
-        System.out.println("B客户购买水果总计: " + consumer.getTotal() + " 元");
     }
 
     //C客户总价
-    public static void getCustCTotalPrice(int appleWeight, int strawberryWeight, int mangoWeight) {
-        Consumer consumer = new Consumer();
-        consumer.addItem(new Item(appleWeight, 8, new BigDecimal(0.00)));
-        consumer.addItem(new Item(strawberryWeight, 13, new BigDecimal(0.80)));
-        consumer.addItem(new Item(mangoWeight, 20, new BigDecimal(0.00)));
+    public static void consumerCTotalPrice() {
+        Consumer consumer = new Consumer("C", "0");
+        consumerBuyItems(consumer, 10, 8, new BigDecimal(0), "Apple");
+        consumerBuyItems(consumer, 10, 13, new BigDecimal(8), "Strawberry");
+        consumerBuyItems(consumer, 10, 20, new BigDecimal(0), "Mango");
         calculateTotal(consumer);
-        System.out.println("C客户购买水果总计: " + consumer.getTotal() + " 元");
     }
 
     //D客户总价
-    public static void getCustDTotalPrice(int appleWeight, int strawberryWeight, int mangoWeight) {
-        Consumer consumer = new Consumer();
-        consumer.addItem(new Item(appleWeight, 8, new BigDecimal(0.00)));
-        consumer.addItem(new Item(strawberryWeight, 13, new BigDecimal(0.80)));
-        consumer.addItem(new Item(mangoWeight, 20, new BigDecimal(0.00)));
+    public static void consumerDTotalPrice() {
+        Consumer consumer = new Consumer("D", "1");
+        consumerBuyItems(consumer, 10, 8, new BigDecimal(0), "Apple");
+        consumerBuyItems(consumer, 10, 13, new BigDecimal(8), "Strawberry");
+        consumerBuyItems(consumer, 10, 20, new BigDecimal(0), "Mango");
         calculateTotal(consumer);
-        discount(consumer);
-        System.out.println("D客户购买水果总计: " + consumer.getTotal() + " 元");
     }
 
     public static void main(String[] args) {
-        //A客户买了10斤苹果20斤草莓
-        getCustATotalPrice(10, 20);
-        //B客户买了10斤苹果20斤草莓10斤芒果
-        getCustBTotalPrice(10, 20, 10);
-        //C客户买了10斤苹果20斤草莓10斤芒果
-        getCustCTotalPrice(10, 20, 10);
-        //D客户买了10斤苹果20斤草莓10斤芒果
-        getCustDTotalPrice(10, 20, 10);
+        //A顾客买了10斤苹果10斤草莓
+        consumerATotalPrice();
+        //B顾客买了10斤苹果10斤草莓10斤芒果
+        consumerBTotalPrice();
+        //C客户买了10斤苹果10斤草莓10斤芒果
+        consumerCTotalPrice();
+        //D客户买了10斤苹果120斤草莓10斤芒果
+        consumerDTotalPrice();
     }
 
     public static class Consumer {
 
         private BigDecimal total;
 
+        private String consumerName;
+
+        private String isDiscount;
         private List<Item> items = new ArrayList<>();
 
-        public void setTotal(BigDecimal total) {
-            this.total = total;
+        public Consumer(String consumerName, String isDiscount) {
+            this.consumerName = consumerName;
+            this.isDiscount = isDiscount;
+            this.total = BigDecimal.ZERO;
+        }
+
+        public String getIsDiscount() {
+            return isDiscount;
+        }
+
+        public void setIsDiscount(String isDiscount) {
+            this.isDiscount = isDiscount;
+        }
+
+        public String getConsumerName() {
+            return consumerName;
+        }
+
+        public void setConsumerName(String consumerName) {
+            this.consumerName = consumerName;
         }
 
         public List<Item> getItems() {
@@ -108,13 +140,13 @@ public class Supermarket {
             return this.total;
         }
 
+        public void setTotal(BigDecimal total) {
+            this.total = total;
+        }
+
         //添加购买水果种类
         public void addItem(Item item) {
             items.add(item);
-        }
-
-        public Consumer() {
-            this.total = BigDecimal.ZERO;
         }
 
         public void addProduct(BigDecimal price) {
@@ -125,17 +157,25 @@ public class Supermarket {
 
     public static class Item {
 
-        public Item(int quantity, int price, BigDecimal discount) {
+        private int quantity;
+        private int price;
+        private BigDecimal discount;
+        private String name;
+
+        public Item(int quantity, int price, BigDecimal discount, String name) {
             this.quantity = quantity;
             this.price = price;
             this.discount = discount;
+            this.name = name;
         }
 
-        private int quantity;
+        public String getName() {
+            return name;
+        }
 
-        private int price;
-
-        private BigDecimal discount;
+        public void setName(String name) {
+            this.name = name;
+        }
 
         public int getQuantity() {
             return quantity;
